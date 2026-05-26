@@ -40,9 +40,24 @@ header{
     box-shadow:0 2px 10px rgba(0,0,0,.5);
 }
 
-.logo{
+.logo-box{
 
-    font-size:28px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-img{
+
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    object-fit:cover;
+}
+
+.logo-text{
+
+    font-size:24px;
     font-weight:700;
     color:#ff0000;
 }
@@ -56,6 +71,12 @@ header{
     border-radius:10px;
     cursor:pointer;
     font-weight:600;
+    transition:.3s;
+}
+
+.logout-btn:hover{
+
+    background:#cc0000;
 }
 
 .container{
@@ -69,7 +90,7 @@ header{
     padding:20px;
     border-radius:20px;
     margin-bottom:25px;
-    box-shadow:0 0 20px rgba(255,0,0,.1);
+    box-shadow:0 0 20px rgba(255,0,0,.08);
 }
 
 .grid{
@@ -89,6 +110,7 @@ select{
     background:#262626;
     color:white;
     font-size:15px;
+    outline:none;
 }
 
 input::placeholder{
@@ -112,6 +134,12 @@ button{
     font-size:16px;
     font-weight:600;
     margin-top:15px;
+    transition:.3s;
+}
+
+.add-btn:hover{
+
+    background:#cc0000;
 }
 
 .search-box{
@@ -236,6 +264,17 @@ button{
 
         font-size:18px;
     }
+
+    .logo-text{
+
+        font-size:18px;
+    }
+
+    .logo-img{
+
+        width:42px;
+        height:42px;
+    }
 }
 
 </style>
@@ -246,13 +285,23 @@ button{
 
 <header>
 
-<div class="logo">
-🎬 Global Movies
+<div class="logo-box">
+
+<img
+src="rasedlogo.png"
+class="logo-img">
+
+<div class="logo-text">
+Global Movies
+</div>
+
 </div>
 
 <button class="logout-btn"
 onclick="logout()">
+
 Logout
+
 </button>
 
 </header>
@@ -279,8 +328,9 @@ Select Category
 <option>Horror</option>
 <option>Drama</option>
 <option>Sci-Fi</option>
-<option>Animation</option>
 <option>Adventure</option>
+<option>Animation</option>
+<option>Crime</option>
 
 </select>
 
@@ -292,7 +342,7 @@ placeholder="IMDb Rating">
 <input
 type="text"
 id="website"
-placeholder="Watch Website">
+placeholder="Website Name">
 
 <input
 type="text"
@@ -306,9 +356,12 @@ placeholder="Poster Image URL">
 
 </div>
 
-<button class="add-btn"
+<button
+class="add-btn"
 onclick="addMovie()">
+
 ➕ Add Movie
+
 </button>
 
 </div>
@@ -323,7 +376,8 @@ onkeyup="searchMovies()">
 
 </div>
 
-<div class="movies-grid"
+<div
+class="movies-grid"
 id="movies">
 
 </div>
@@ -333,7 +387,7 @@ id="movies">
 <script>
 
 const API =
-"https://script.google.com/macros/s/AKfycbw67jsKQWdOwKIlQCbPcIGP9LE17YggVKbMWVM8vVWJzaLupdHJYoTUXq16ZO2ncIU1tA/exec";
+"https://script.google.com/macros/s/AKfycbwIndqHXpQEXSfOo1m8XRN12pWBD4pGZXYNiRsQE4OBJjz4b7ZOKSubgGZjXXZxSy5Aqw/exec";
 
 let allMovies = [];
 
@@ -410,6 +464,7 @@ function renderMovies(data){
                         class="watch-btn">
 
                         ▶ Watch
+
                         </a>
 
                         <button
@@ -417,6 +472,7 @@ function renderMovies(data){
                         onclick='editMovie(${JSON.stringify(movie)})'>
 
                         ✏ Edit
+
                         </button>
 
                         <button
@@ -424,6 +480,7 @@ function renderMovies(data){
                         onclick='deleteMovie("${movie.id}")'>
 
                         🗑 Delete
+
                         </button>
 
                     </div>
@@ -431,6 +488,7 @@ function renderMovies(data){
                 </div>
 
             </div>
+
             `;
         });
     }
