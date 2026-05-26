@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Global Movies App</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+    background:#0b0b0b;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px;
+    background:#111;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 2px 10px rgba(0,0,0,.5);
+}
+
+.logo{
+
+    font-size:28px;
+    font-weight:700;
+    color:#ff0000;
+}
+
+.logout-btn{
+
+    background:#ff0000;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.container{
+
+    padding:20px;
+}
+
+.top-box{
+
+    background:#171717;
+    padding:20px;
+    border-radius:20px;
+    margin-bottom:25px;
+    box-shadow:0 0 20px rgba(255,0,0,.1);
+}
+
+.grid{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+input,
+select{
+
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#262626;
+    color:white;
+    font-size:15px;
+}
+
+input::placeholder{
+
+    color:#999;
+}
+
+button{
+
+    border:none;
+    cursor:pointer;
+}
+
+.add-btn{
+
+    width:100%;
+    padding:14px;
+    background:#ff0000;
+    color:white;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    margin-top:15px;
+}
+
+.search-box{
+
+    margin-bottom:20px;
+}
+
+.movies-grid{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.movie-card{
+
+    background:#171717;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.3s;
+    box-shadow:0 0 15px rgba(0,0,0,.5);
+}
+
+.movie-card:hover{
+
+    transform:translateY(-5px);
+}
+
+.poster{
+
+    width:100%;
+    height:400px;
+    object-fit:cover;
+}
+
+.movie-content{
+
+    padding:15px;
+}
+
+.movie-title{
+
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.category{
+
+    display:inline-block;
+    background:#2b2b2b;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+.rating{
+
+    color:#ffd700;
+    margin-bottom:12px;
+    font-size:15px;
+}
+
+.website{
+
+    color:#aaa;
+    margin-bottom:15px;
+}
+
+.actions{
+
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.watch-btn{
+
+    flex:1;
+    background:#ff0000;
+    color:white;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.edit-btn{
+
+    background:#ffaa00;
+    color:white;
+    padding:10px 15px;
+    border-radius:10px;
+}
+
+.delete-btn{
+
+    background:#444;
+    color:white;
+    padding:10px 15px;
+    border-radius:10px;
+}
+
+.empty{
+
+    text-align:center;
+    padding:50px;
+    color:#888;
+    font-size:20px;
+}
+
+@media(max-width:600px){
+
+    .poster{
+
+        height:320px;
+    }
+
+    .movie-title{
+
+        font-size:18px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+🎬 Global Movies
+</div>
+
+<button class="logout-btn"
+onclick="logout()">
+Logout
+</button>
+
+</header>
+
+<div class="container">
+
+<div class="top-box">
+
+<div class="grid">
+
+<input
+type="text"
+id="movieName"
+placeholder="Movie Name">
+
+<select id="category">
+
+<option value="">
+Select Category
+</option>
+
+<option>Action</option>
+<option>Comedy</option>
+<option>Horror</option>
+<option>Drama</option>
+<option>Sci-Fi</option>
+<option>Animation</option>
+<option>Adventure</option>
+
+</select>
+
+<input
+type="number"
+id="rating"
+placeholder="IMDb Rating">
+
+<input
+type="text"
+id="website"
+placeholder="Watch Website">
+
+<input
+type="text"
+id="link"
+placeholder="Movie Link">
+
+<input
+type="text"
+id="poster"
+placeholder="Poster Image URL">
+
+</div>
+
+<button class="add-btn"
+onclick="addMovie()">
+➕ Add Movie
+</button>
+
+</div>
+
+<div class="search-box">
+
+<input
+type="text"
+id="search"
+placeholder="Search Movies..."
+onkeyup="searchMovies()">
+
+</div>
+
+<div class="movies-grid"
+id="movies">
+
+</div>
+
+</div>
+
+<script>
+
+const API =
+"https://script.google.com/macros/s/AKfycbw67jsKQWdOwKIlQCbPcIGP9LE17YggVKbMWVM8vVWJzaLupdHJYoTUXq16ZO2ncIU1tA/exec";
+
+let allMovies = [];
+
+if(localStorage.getItem("login")!="true"){
+
+    window.location="index.html";
+}
+
+async function loadMovies(){
+
+    document.getElementById("movies").innerHTML =
+    `<div class="empty">Loading Movies...</div>`;
+
+    const response =
+    await fetch(
+    `${API}?action=getMovies`
+    );
+
+    const data =
+    await response.json();
+
+    allMovies = data.reverse();
+
+    renderMovies(allMovies);
+}
+
+function renderMovies(data){
+
+    let html = "";
+
+    if(data.length==0){
+
+        html =
+        `<div class="empty">
+        No Movies Found
+        </div>`;
+
+    }else{
+
+        data.forEach(movie=>{
+
+            html += `
+
+            <div class="movie-card">
+
+                <img
+                class="poster"
+                src="${movie.poster}"
+                onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'">
+
+                <div class="movie-content">
+
+                    <div class="movie-title">
+                    ${movie.movieName}
+                    </div>
+
+                    <div class="category">
+                    ${movie.category}
+                    </div>
+
+                    <div class="rating">
+                    ⭐ ${movie.rating}/10
+                    </div>
+
+                    <div class="website">
+                    ${movie.website}
+                    </div>
+
+                    <div class="actions">
+
+                        <a
+                        href="${movie.link}"
+                        target="_blank"
+                        class="watch-btn">
+
+                        ▶ Watch
+                        </a>
+
+                        <button
+                        class="edit-btn"
+                        onclick='editMovie(${JSON.stringify(movie)})'>
+
+                        ✏ Edit
+                        </button>
+
+                        <button
+                        class="delete-btn"
+                        onclick='deleteMovie("${movie.id}")'>
+
+                        🗑 Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+            `;
+        });
+    }
+
+    document.getElementById("movies").innerHTML =
+    html;
+}
+
+async function addMovie(){
+
+    const movieName =
+    document.getElementById("movieName").value;
+
+    const category =
+    document.getElementById("category").value;
+
+    const rating =
+    document.getElementById("rating").value;
+
+    const website =
+    document.getElementById("website").value;
+
+    const link =
+    document.getElementById("link").value;
+
+    const poster =
+    document.getElementById("poster").value;
+
+    if(
+        !movieName ||
+        !category ||
+        !rating ||
+        !website ||
+        !link
+    ){
+
+        alert("Please Complete All Fields");
+
+        return;
+    }
+
+    await fetch(API,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+            action:"addMovie",
+
+            movieName,
+
+            category,
+
+            rating,
+
+            website,
+
+            link,
+
+            poster
+        })
+    });
+
+    clearInputs();
+
+    loadMovies();
+}
+
+async function deleteMovie(id){
+
+    const ok =
+    confirm("Delete This Movie ?");
+
+    if(!ok) return;
+
+    await fetch(
+    `${API}?action=deleteMovie&id=${id}`
+    );
+
+    loadMovies();
+}
+
+async function editMovie(movie){
+
+    const movieName =
+    prompt(
+    "Movie Name",
+    movie.movieName
+    );
+
+    if(movieName==null) return;
+
+    const category =
+    prompt(
+    "Category",
+    movie.category
+    );
+
+    const rating =
+    prompt(
+    "Rating",
+    movie.rating
+    );
+
+    const website =
+    prompt(
+    "Website",
+    movie.website
+    );
+
+    const link =
+    prompt(
+    "Movie Link",
+    movie.link
+    );
+
+    const poster =
+    prompt(
+    "Poster URL",
+    movie.poster
+    );
+
+    await fetch(API,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+            action:"updateMovie",
+
+            id:movie.id,
+
+            movieName,
+
+            category,
+
+            rating,
+
+            website,
+
+            link,
+
+            poster
+        })
+    });
+
+    loadMovies();
+}
+
+function searchMovies(){
+
+    const search =
+    document.getElementById("search")
+    .value
+    .toLowerCase();
+
+    const filtered =
+    allMovies.filter(movie=>
+
+        movie.movieName
+        .toLowerCase()
+        .includes(search)
+    );
+
+    renderMovies(filtered);
+}
+
+function clearInputs(){
+
+    document.getElementById("movieName").value="";
+    document.getElementById("category").value="";
+    document.getElementById("rating").value="";
+    document.getElementById("website").value="";
+    document.getElementById("link").value="";
+    document.getElementById("poster").value="";
+}
+
+function logout(){
+
+    localStorage.removeItem("login");
+
+    window.location="index.html";
+}
+
+loadMovies();
+
+</script>
+
+</body>
+</html>
